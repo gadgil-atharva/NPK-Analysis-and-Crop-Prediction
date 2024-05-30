@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.png">
+<head>
+    
+    <title>Crop Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3eded;
+            margin: 0;
+            padding: 0;
+            cursor: url('/static/favicon.svg'), auto;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #f9f5ed;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        form {
+            display: inline-block;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555555;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        select {
+            width: 220px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005f7f;
+        }
+
+        #predictionResult, #recommendation {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .acb {
+            color: #009688;
+        }
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #a4e954; /* Darker red on hover */
+        }
+    </style>
+    <!--<style>
+        body {
+            background-color: #f3eded; /* Light pinkish background */
+            font-family: Arial, sans-serif; /* Use Arial font */
+        }
+
+        .container {
+            max-width: 600px; /* Set maximum width for content */
+            margin: 0 auto; /* Center content horizontally */
+            padding: 20px; /* Add some padding */
+            background-color: #f9f5ed; /* Light yellow background for container */
+            border-radius: 8px; /* Add some rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        }
+
+        h1, h2 {
+            color: #2c3e50; /* Dark blue for headings */
+        }
+
+        form {
+            margin-bottom: 20px; /* Add some space below forms */
+        }
+
+        label {
+            font-weight: bold; /* Make labels bold */
+            color: #34495e; /* Dark gray for labels */
+        }
+
+        input[type="text"],
+        select {
+            width: 100%; /* Make input fields and select full width */
+            padding: 10px; /* Add some padding */
+            margin-bottom: 10px; /* Add some space below inputs */
+            border: 1px solid #bdc3c7; /* Light blue-gray border */
+            border-radius: 4px; /* Add some rounded corners */
+            box-sizing: border-box; /* Include padding and border in width */
+        }
+
+        input[type="submit"],
+        button {
+            background-color: #e74c3c; /* Red background */
+            color: #ffffff; /* White text */
+            padding: 12px 24px; /* Add padding */
+            margin-bottom: 10px; /* Add some space below buttons */
+            border: none; /* Remove border */
+            border-radius: 4px; /* Add some rounded corners */
+            cursor: pointer; /* Add pointer cursor */
+            transition: background-color 0.3s; /* Smooth transition for background color */
+        }
+
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #a4e954; /* Darker red on hover */
+        }
+
+        select {
+            padding: 10px; /* Add some padding */
+        }
+    </style>-->
+</head>
+<body>
+<div class="container">
+    <h1 class="acb">Crop Predictor</h1>
+    <form id="cropForm" onsubmit="event.preventDefault(); getPrediction()">
+        <label>N</label>
+        <input type="text" name="N" value="{{ firebase_data.N }}"><br><br>
+        <label>P</label>
+        <input type="text" name="P" value="{{ firebase_data.P }}"><br><br>
+        <label>K</label>
+        <input type="text" name="K" value="{{ firebase_data.K }}"><br><br>
+        <label>Temperature: </label>
+        <input type="text" name="Temperature" value="{{ firebase_data.temp_C}}"><br><br>
+        <label>Humidity: </label>
+        <input type="text" name="Humidity" value="{{ firebase_data.humid}}"><br><br>
+
+        <input type="submit" value="Predict"><br><br>
+    </form>
+    <div id="predictionResult"></div>
+
+    <h2 class="acb">Select Crop</h2>
+    <form id="cropForm2">
+        <label for="crop">Choose a crop:</label>
+        <select id="crop" name="crop">
+            <option value="Carrot">Carrot</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Potato">Potato</option>
+            <option value="Beans">Beans</option>
+            <option value="Brinjal">Brinjal</option>
+            <option value="Cabbage">Cabbage</option>
+            <option value="Cauliflower">Cauliflower</option>
+            <option value="Chilli">Chilli</option>
+            <option value="Cowpea">Cowpea</option>
+            <option value="Cucumber">Cucumber</option>
+            <option value="Garden pea">Garden pea</option>
+            <option value="Garlic">Garlic</option>
+            <option value="Lettuce">Lettuce</option>
+            <option value="Okra">Okra</option>
+            <option value="Onion">Onion</option>
+            <option value="Spinach">Spinach</option>
+            <option value="Snap bean">Snap bean</option>
+            <option value="Watermelon">Watermelon</option>
+            <!-- Add more options as needed -->
+        </select>
+        <br><br>
+        <button type="button" onclick="getFertilizerRecommendation()">Get Recommendation</button>
+    </form>
+
+    <div id="recommendation"></div>
+    
+    <script>
+    function getPrediction() {
+        var form = document.getElementById("cropForm");
+        var formData = new FormData(form);
+
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(prediction => {
+            // Update the element with the prediction result
+            document.getElementById("predictionResult").innerHTML = prediction;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getFertilizerRecommendation() {
+        var crop = document.getElementById("crop").value;
+        var data = { 'crop': crop };
+
+        fetch('/choice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("recommendation").innerHTML = `
+                <h2>Recommendation for ${data.crop}</h2>
+                <p>Nitrogen (N): ${data.N.toFixed(2)} units</p>
+                <p>Phosphorus (P): ${data.P.toFixed(2)} units</p>
+                <p>Potassium (K): ${data.K.toFixed(2)} units</p>
+            `;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    </script>
+</div>
+
+</body>
+</html>
