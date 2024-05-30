@@ -1,3 +1,6 @@
 flask
 numpy
 sklearn
+firebase
+pickle
+pandas
